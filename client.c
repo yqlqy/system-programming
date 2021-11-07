@@ -8,6 +8,7 @@
 #include <arpa/inet.h>
 
 #define MAX_LINE 20
+int isMatch(char assert[], char msg[]);
 
 int main (int argc, char *argv[]) {
   char* host_addr = argv[1];
@@ -52,22 +53,34 @@ int main (int argc, char *argv[]) {
     // char recvFrom[10];
     // char recvInfo[10];
     // sprintf(recvInfo, "HELLO %d\n", count);
-    // char received[len];
-    memset(sendInfo, 0, sizeof(sendInfo));
+    char buf[20];
+    memset(sendInfo, 0, strlen(sendInfo));
+    //char msgFromServer[MAX_LINE];
     memset(number, 0, sizeof(number));
-    recv(s, sendInfo, len, 0);
-    char expectedMsg[] = "HELLO ";
-    sprintf(number, "%d\n", count);
-    strcat(expectedMsg, number);
-    if (strcmp(sendInfo, expectedMsg) == 0) {
-      fputs(sendInfo, stdout);
-    } else {
-      perror("ERROR");
-    }
+    //recv(s, buf, 10, 0);
+    
     if (threeWayHandShaking == 2) {
       close(s);
       break;
     }
+
+    char expectedMsg[10] = "HELLO ";
+    sprintf(number, "%d\n", count);
+    strcat(expectedMsg, number);
+    expectedMsg[strlen(expectedMsg)] = 0;
+    
+    recv(s, buf, sizeof(buf), 0);
+    printf("Expected msg: %s\n", expectedMsg);
+    printf("Buf msg: %s\n", buf); 
+
+    if (strcmp(expectedMsg, buf) == 0) {
+      fputs(buf, stdout);
+      fflush(stdout);
+      count++;
+    } else {
+      perror("ERROR");
+    }
+
     
     sleep(3);
   }
@@ -81,4 +94,18 @@ int main (int argc, char *argv[]) {
   // }
 
   return 0;
+}
+
+int isMatch(char assert[], char msg[]) {
+  int len;
+  len = strlen(msg);
+  int i;
+  for (i = 0; i < len; i++) {
+    if (msg[i] == '\n' || msg[i] == 0) {
+      return 1;
+    } else if (msg[i] != assert[i]) {
+      return 0;
+    }
+  }
+  return 1;
 }

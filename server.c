@@ -50,24 +50,30 @@ int main(int argc, char *argv[]) {
       perror("simplex-talk: accept");
       exit(1);
     }
-    printf("Waiting for connection...");
+    printf("Waiting for connection...\n");
     int seq = 0;
     while(len = recv(new_s, buf, sizeof(buf), 0)){
       if (seq > 0) {
-        char expectedMsg[] = "HELLO ";
+        char expectedMsg[10] = "HELLO ";
         memset(number, 0, sizeof(number));
         sprintf(number, "%d\n", seq+1);
         strcat(expectedMsg, number);
+	expectedMsg[strlen(expectedMsg)] = 0;
         if (strcmp(expectedMsg, buf) == 0) {
           fputs(buf, stdout);
+	  fflush(stdout);
+	  fputs("Finished three way handshaking!!!\n", stdout);
+	  fflush(stdout);
         } else {
           perror("ERROR");
         }
-        close(new_s);
-        close(s);
-	break;
+	continue;
+        //close(new_s);
+        //close(s);
+	//break;
       }
       fputs(buf, stdout);
+      fflush(stdout);
       char *pt = strtok(buf, " ");
       char ** res = NULL;
       int idx =0;
@@ -83,6 +89,7 @@ int main(int argc, char *argv[]) {
       sprintf(number, " %d\n", seq);
       strcat(res[0], number);
       send(new_s, res[0], MAX_LINE, 0);
+      memset(buf, 0, sizeof(buf));
     }
     close(new_s);
   }
