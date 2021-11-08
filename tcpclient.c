@@ -56,6 +56,7 @@ int main (int argc, char *argv[]) {
     
     if (threeWayHandShaking == 2) {
       close(s);
+      //printf("Closing socket and breaking...");
       break;
     }
 
@@ -66,8 +67,8 @@ int main (int argc, char *argv[]) {
     int msgLen;
     msgLen = recv(s, buf, sizeof(buf), 0);
     buf[msgLen] = '\0';
-    printf("Expected msg: %s\n", expectedMsg);
-    printf("Buf msg: %s\n", buf); 
+    // printf("Expected msg: %s\n", expectedMsg);
+    // printf("Buf msg: %s\n", buf); 
 
     if (strcmp(expectedMsg, buf) == 0) {
       fputs(buf, stdout);
@@ -78,7 +79,7 @@ int main (int argc, char *argv[]) {
     }
 
     
-    sleep(3);
+    //sleep(3);
   }
 
   return 0;

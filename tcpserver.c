@@ -15,8 +15,11 @@
 #define ARRAY_SIZE 1024
 
 int main(int argc, char *argv[]) {
-  char* host_addr = argv[1];
-  int port = atoi(argv[2]);
+  // char* host_addr = argv[1];
+  // int port = atoi(argv[2]);
+  /* hard-coded ip address for project3a*/
+  char* host_addr = "127.0.0.1";
+  int port = atoi(argv[1]);
 
   /*setup passive open*/
   int s;
@@ -51,7 +54,7 @@ int main(int argc, char *argv[]) {
       perror("simplex-talk: accept");
       exit(1);
     }
-    printf("Waiting for connection...\n");
+    // printf("Waiting for connection...\n");
     int seq = 0;
     while(len = recv(new_s, buf, sizeof(buf), 0)){
       //buf[len] = '\0';
@@ -64,7 +67,7 @@ int main(int argc, char *argv[]) {
         if (strcmp(expectedMsg, buf) == 0) {
           fputs(buf, stdout);
 	  fflush(stdout);
-	  fputs("Finished three way handshaking!!!\n", stdout);
+	  // fputs("Finished three way handshaking!!!\n", stdout);
 	  fflush(stdout);
         } else {
           perror("ERROR");
