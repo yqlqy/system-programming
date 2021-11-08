@@ -42,7 +42,7 @@ int main (int argc, char *argv[]) {
   int threeWayHandShaking = 0;
   while (1){//((fgets(buf, sizeof(buf),stdin)) {
     char sendInfo[] = "HELLO ";
-    char number[5];
+    char number[20];
     sprintf(number, "%d\n", count);
     strcat(sendInfo, number);
     // buf[MAX_LINE-1] = '\0';
@@ -64,12 +64,13 @@ int main (int argc, char *argv[]) {
       break;
     }
 
-    char expectedMsg[10] = "HELLO ";
+    char expectedMsg[20] = "HELLO ";
     sprintf(number, "%d\n", count);
     strcat(expectedMsg, number);
     expectedMsg[strlen(expectedMsg)] = 0;
-    
-    recv(s, buf, sizeof(buf), 0);
+    int msgLen;
+    msgLen = recv(s, buf, sizeof(buf), 0);
+    buf[msgLen] = '\0';
     printf("Expected msg: %s\n", expectedMsg);
     printf("Buf msg: %s\n", buf); 
 

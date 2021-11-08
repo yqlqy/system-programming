@@ -43,8 +43,8 @@ int main(int argc, char *argv[]) {
   /* wait for connection, then receive and print text */
   int new_s;
   socklen_t len = sizeof(sin);
-  char buf[MAX_LINE];
-  char number[5];
+  char buf[20];
+  char number[20];
   while(1) {
     if((new_s = accept(s, (struct sockaddr *)&sin, &len)) <0){
       perror("simplex-talk: accept");
@@ -53,9 +53,10 @@ int main(int argc, char *argv[]) {
     printf("Waiting for connection...\n");
     int seq = 0;
     while(len = recv(new_s, buf, sizeof(buf), 0)){
+      //buf[len] = '\0';
       if (seq > 0) {
-        char expectedMsg[10] = "HELLO ";
-        memset(number, 0, sizeof(number));
+        char expectedMsg[20] = "HELLO ";
+        memset(number, 0, strlen(number));
         sprintf(number, "%d\n", seq+1);
         strcat(expectedMsg, number);
 	expectedMsg[strlen(expectedMsg)] = 0;
@@ -88,6 +89,7 @@ int main(int argc, char *argv[]) {
       memset(number, 0, sizeof(number));
       sprintf(number, " %d\n", seq);
       strcat(res[0], number);
+      //res[0][strlen(res[0])] = 0;
       send(new_s, res[0], MAX_LINE, 0);
       memset(buf, 0, sizeof(buf));
     }
