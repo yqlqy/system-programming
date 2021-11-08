@@ -8,7 +8,8 @@
 #include <arpa/inet.h>
 
 #define MAX_LINE 20
-int isMatch(char assert[], char msg[]);
+#define ARRAY_SIZE 1024
+//int isMatch(char assert[], char msg[]);
 
 int main (int argc, char *argv[]) {
   char* host_addr = argv[1];
@@ -42,29 +43,23 @@ int main (int argc, char *argv[]) {
   int threeWayHandShaking = 0;
   while (1){//((fgets(buf, sizeof(buf),stdin)) {
     char sendInfo[] = "HELLO ";
-    char number[20];
+    char number[ARRAY_SIZE];
     sprintf(number, "%d\n", count);
     strcat(sendInfo, number);
-    // buf[MAX_LINE-1] = '\0';
     int len = strlen(sendInfo)+1;
     send(s, sendInfo, len, 0);
     threeWayHandShaking++;
     count++;
-    // char recvFrom[10];
-    // char recvInfo[10];
-    // sprintf(recvInfo, "HELLO %d\n", count);
-    char buf[20];
+    char buf[ARRAY_SIZE];
     memset(sendInfo, 0, strlen(sendInfo));
-    //char msgFromServer[MAX_LINE];
     memset(number, 0, sizeof(number));
-    //recv(s, buf, 10, 0);
     
     if (threeWayHandShaking == 2) {
       close(s);
       break;
     }
 
-    char expectedMsg[20] = "HELLO ";
+    char expectedMsg[ARRAY_SIZE] = "HELLO ";
     sprintf(number, "%d\n", count);
     strcat(expectedMsg, number);
     expectedMsg[strlen(expectedMsg)] = 0;
@@ -85,28 +80,20 @@ int main (int argc, char *argv[]) {
     
     sleep(3);
   }
-  // char buf[10] = "Hello";
-  // printf("line46");
-  // while (1) {
-  //   printf("Client call...");
-  //   buf[strlen(buf)-1] = '\0';
-  //   send(s, buf, strlen(buf)+1, 0);
-  //   sleep(5);
-  // }
 
   return 0;
 }
 
-int isMatch(char assert[], char msg[]) {
-  int len;
-  len = strlen(msg);
-  int i;
-  for (i = 0; i < len; i++) {
-    if (msg[i] == '\n' || msg[i] == 0) {
-      return 1;
-    } else if (msg[i] != assert[i]) {
-      return 0;
-    }
-  }
-  return 1;
-}
+//int isMatch(char assert[], char msg[]) {
+//  int len;
+//  len = strlen(msg);
+//  int i;
+//  for (i = 0; i < len; i++) {
+//    if (msg[i] == '\n' || msg[i] == 0) {
+//      return 1;
+//    } else if (msg[i] != assert[i]) {
+//      return 0;
+//    }
+//  }
+//  return 1;
+//}

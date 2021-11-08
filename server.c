@@ -12,6 +12,7 @@
 
 #define MAX_PENDING 10
 #define MAX_LINE 10
+#define ARRAY_SIZE 1024
 
 int main(int argc, char *argv[]) {
   char* host_addr = argv[1];
@@ -43,8 +44,8 @@ int main(int argc, char *argv[]) {
   /* wait for connection, then receive and print text */
   int new_s;
   socklen_t len = sizeof(sin);
-  char buf[20];
-  char number[20];
+  char buf[ARRAY_SIZE];
+  char number[ARRAY_SIZE];
   while(1) {
     if((new_s = accept(s, (struct sockaddr *)&sin, &len)) <0){
       perror("simplex-talk: accept");
@@ -55,7 +56,7 @@ int main(int argc, char *argv[]) {
     while(len = recv(new_s, buf, sizeof(buf), 0)){
       //buf[len] = '\0';
       if (seq > 0) {
-        char expectedMsg[20] = "HELLO ";
+        char expectedMsg[ARRAY_SIZE] = "HELLO ";
         memset(number, 0, strlen(number));
         sprintf(number, "%d\n", seq+1);
         strcat(expectedMsg, number);
@@ -79,7 +80,7 @@ int main(int argc, char *argv[]) {
       char ** res = NULL;
       int idx =0;
       while (pt) {
-        res = (char **)realloc(res, sizeof(char*) * 10);
+        res = (char **)realloc(res, sizeof(char*) * strlen(buf));
         if (res == NULL) exit(-1);
         res[idx++] = pt;
         pt = strtok(NULL, " ");
@@ -90,7 +91,7 @@ int main(int argc, char *argv[]) {
       sprintf(number, " %d\n", seq);
       strcat(res[0], number);
       //res[0][strlen(res[0])] = 0;
-      send(new_s, res[0], MAX_LINE, 0);
+      send(new_s, res[0], strlen(buf), 0);
       memset(buf, 0, sizeof(buf));
     }
     close(new_s);
