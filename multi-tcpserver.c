@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
 
     if(pthread_create(&tids[i++], NULL, connectToClient, &new_s) != 0 )
            printf("Failed to create thread\n");
-    printf("Created thread %d\n", i);
+    //printf("Created thread %d\n", i);
 
     if(i >= MAX_PENDING)
     {
@@ -77,7 +77,7 @@ int main(int argc, char *argv[]) {
       while(i < MAX_PENDING)
       {
         pthread_join(tids[i++],NULL);
-        printf("Checking thread %d termination status\n", i);
+        //printf("Checking thread %d termination status\n", i);
       }
       i = 0;
     }    
@@ -92,7 +92,7 @@ void *connectToClient(void *arg) {
   char number[ARRAY_SIZE];
   int thread_s = *((int *)arg);
   int len;
-  printf("Current socket fd: %d\n", thread_s);
+  //printf("Current socket fd: %d\n", thread_s);
   while(len = recv(thread_s, buf, sizeof(buf), 0)){
     //buf[len] = '\0';
     if (seq > 0) {
