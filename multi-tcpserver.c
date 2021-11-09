@@ -48,8 +48,6 @@ int main(int argc, char *argv[]) {
   listen(s, MAX_PENDING);  
  
   /* wait for connection, then receive and print text */
-  int new_s;
-  socklen_t len = sizeof(sin);
   
 
   pthread_t tids[MAX_PENDING];
@@ -62,6 +60,9 @@ int main(int argc, char *argv[]) {
 
 
   while(1) {
+    int new_s;
+    socklen_t len = sizeof(sin);
+
     if((new_s = accept(s, (struct sockaddr *)&sin, &len)) <0){
       perror("simplex-talk: accept");
       exit(1);
