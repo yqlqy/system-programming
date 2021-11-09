@@ -51,6 +51,7 @@ int main(int argc, char *argv[]) {
   
 
   pthread_t tids[MAX_PENDING];
+  int sockDfs[MAX_PENDING];
   int i = 0;
   int id[MAX_PENDING];
 
@@ -67,7 +68,7 @@ int main(int argc, char *argv[]) {
       perror("simplex-talk: accept");
       exit(1);
     }
-
+    sockDfs[i] = new_s;
     if(pthread_create(&tids[i++], NULL, connectToClient, &new_s) != 0 )
            printf("Failed to create thread\n");
     //printf("Created thread %d\n", i);
@@ -77,7 +78,10 @@ int main(int argc, char *argv[]) {
       i = 0;
       while(i < MAX_PENDING)
       {
-        pthread_join(tids[i++],NULL);
+        if (pthread_join(tids[i],NULL) == 0) {
+          close(sockDfs[i]);
+        }
+        i++;
         //printf("Checking thread %d termination status\n", i);
       }
       i = 0;
@@ -86,7 +90,7 @@ int main(int argc, char *argv[]) {
 
   return 0;
 }
-
+pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 void *connectToClient(void *arg) {
   int seq = 0;
   char buf[ARRAY_SIZE];
@@ -94,6 +98,7 @@ void *connectToClient(void *arg) {
   int thread_s = *((int *)arg);
   int len;
   //printf("Current socket fd: %d\n", thread_s);
+  pthread_mutex_lock(&lock);
   while(len = recv(thread_s, buf, sizeof(buf), 0)){
     //buf[len] = '\0';
     if (seq > 0) {
@@ -130,5 +135,6 @@ void *connectToClient(void *arg) {
     send(thread_s, res[0], strlen(buf), 0);
     memset(buf, 0, sizeof(buf));
   }
-  close(thread_s);
+  pthread_mutex_unlock(&lock);
+  //close(thread_s);
 }
