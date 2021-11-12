@@ -9,7 +9,6 @@
 
 #define MAX_LINE 20
 #define ARRAY_SIZE 1024
-//int isMatch(char assert[], char msg[]);
 
 int main (int argc, char *argv[]) {
   char* host_addr = argv[1];
@@ -85,16 +84,3 @@ int main (int argc, char *argv[]) {
   return 0;
 }
 
-//int isMatch(char assert[], char msg[]) {
-//  int len;
-//  len = strlen(msg);
-//  int i;
-//  for (i = 0; i < len; i++) {
-//    if (msg[i] == '\n' || msg[i] == 0) {
-//      return 1;
-//    } else if (msg[i] != assert[i]) {
-//      return 0;
-//    }
-//  }
-//  return 1;
-//}

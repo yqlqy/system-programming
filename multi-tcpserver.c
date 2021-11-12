@@ -16,6 +16,7 @@
 #define ARRAY_SIZE 1024
 
 void *connectToClient(void *arg);
+pthread_mutex_t mutex;
 
 int main(int argc, char *argv[]) {
   // char* host_addr = argv[1];
@@ -23,6 +24,12 @@ int main(int argc, char *argv[]) {
   /* hard-coded ip address for project3a*/
   char* host_addr = "127.0.0.1";
   int port = atoi(argv[1]);
+
+  // init a lock
+  // if (pthread_mutex_init(&mutex, NULL) != 0) {                                    
+  //   perror("mutex lock init error");                                                       
+  //   exit(1);                                                                    
+  // } 
 
   /*setup passive open*/
   int s;
@@ -53,12 +60,7 @@ int main(int argc, char *argv[]) {
   pthread_t tids[MAX_PENDING];
   int sockDfs[MAX_PENDING];
   int i = 0;
-  int id[MAX_PENDING];
-
-  // for (i=0; i<MAX_PENDING; i++) id[i] = i;
-
-  // srand(0);  
-
+  int s_ids[MAX_PENDING];
 
   while(1) {
     int new_s;
@@ -68,9 +70,13 @@ int main(int argc, char *argv[]) {
       perror("simplex-talk: accept");
       exit(1);
     }
-    sockDfs[i] = new_s;
-    if(pthread_create(&tids[i++], NULL, connectToClient, &new_s) != 0 )
+
+    if(pthread_create(&tids[i], NULL, connectToClient, &new_s) != 0 ) {
            printf("Failed to create thread\n");
+    } else {
+      s_ids[i] = new_s;
+      i++;
+    }
     //printf("Created thread %d\n", i);
 
     if(i >= MAX_PENDING)
@@ -79,10 +85,11 @@ int main(int argc, char *argv[]) {
       while(i < MAX_PENDING)
       {
         if (pthread_join(tids[i],NULL) == 0) {
-          close(sockDfs[i]);
+          close(s_ids[i]);
         }
         i++;
         //printf("Checking thread %d termination status\n", i);
+        sleep(0.2);
       }
       i = 0;
     }    
@@ -92,13 +99,17 @@ int main(int argc, char *argv[]) {
 }
 pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 void *connectToClient(void *arg) {
+  // if (pthread_mutex_lock(&mutex) != 0) {                                          
+  //   perror("mutex lock eror");                                                       
+  //   exit(2);                                                                    
+  // }  
+
   int seq = 0;
   char buf[ARRAY_SIZE];
   char number[ARRAY_SIZE];
   int thread_s = *((int *)arg);
   int len;
   //printf("Current socket fd: %d\n", thread_s);
-  pthread_mutex_lock(&lock);
   while(len = recv(thread_s, buf, sizeof(buf), 0)){
     //buf[len] = '\0';
     if (seq > 0) {
@@ -135,6 +146,9 @@ void *connectToClient(void *arg) {
     send(thread_s, res[0], strlen(buf), 0);
     memset(buf, 0, sizeof(buf));
   }
-  pthread_mutex_unlock(&lock);
   //close(thread_s);
+  // if (pthread_mutex_unlock(&mutex) != 0) {
+  //   perror("mutex unlock error");
+  //   exit(2);
+  // }
 }
