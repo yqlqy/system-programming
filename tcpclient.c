@@ -44,7 +44,7 @@ int main (int argc, char *argv[]) {
   while (1){//((fgets(buf, sizeof(buf),stdin)) {
     char sendInfo[] = "HELLO ";
     char number[ARRAY_SIZE];
-    sprintf(number, "%d\n", count);
+    sprintf(number, "%d", count);
     strcat(sendInfo, number);
     int len = strlen(sendInfo)+1;
     send(s, sendInfo, len, 0);
@@ -61,7 +61,7 @@ int main (int argc, char *argv[]) {
     }
 
     char expectedMsg[ARRAY_SIZE] = "HELLO ";
-    sprintf(number, "%d\n", count);
+    sprintf(number, "%d", count);
     strcat(expectedMsg, number);
     expectedMsg[strlen(expectedMsg)] = 0;
     int msgLen;
@@ -72,6 +72,7 @@ int main (int argc, char *argv[]) {
 
     if (strcmp(expectedMsg, buf) == 0) {
       fputs(buf, stdout);
+      fputs("\n", stdout);
       fflush(stdout);
       count++;
     } else {

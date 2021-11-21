@@ -104,19 +104,21 @@ void *connectToClient(void *arg) {
     if (seq > 0) {
       char expectedMsg[ARRAY_SIZE] = "HELLO ";
       memset(number, 0, strlen(number));
-      sprintf(number, "%d\n", seq+1);
+      sprintf(number, "%d", seq+1);
       strcat(expectedMsg, number);
       expectedMsg[strlen(expectedMsg)] = 0;
       if (strcmp(expectedMsg, buf) == 0) {
         fputs(buf, stdout);
+        fputs("\n", stdout);
         fflush(stdout);
-        fflush(stdout);
+        //fflush(stdout);
       } else {
         perror("ERROR");
       }
       continue;
     }
     fputs(buf, stdout);
+    fputs("\n", stdout);
     fflush(stdout);
     char *pt = strtok(buf, " ");
     char ** res = NULL;
@@ -130,7 +132,7 @@ void *connectToClient(void *arg) {
     seq = atoi(res[1]);
     seq++;
     memset(number, 0, sizeof(number));
-    sprintf(number, " %d\n", seq);
+    sprintf(number, " %d", seq);
     strcat(res[0], number);
     send(thread_s, res[0], strlen(buf), 0);
     memset(buf, 0, sizeof(buf));
