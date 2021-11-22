@@ -47,8 +47,8 @@ int main (int argc, char *argv[]) {
     //memset(number, 0, strlen(number)+1);
     //snprintf(number, 10, "%d", count);
     //strcat(sendInfo, argv[3]);
-    char sendInfo[12];
-    snprintf(sendInfo, 12, "HELLO %d", count);
+    char sendInfo[ARRAY_SIZE];
+    snprintf(sendInfo, ARRAY_SIZE, "HELLO %d", count);
     int len = strlen(sendInfo)+1;
     //printf("Got params: %d; Client send ori msg; %s\n", count, sendInfo);
     send(s, sendInfo, len, 0);
@@ -68,8 +68,8 @@ int main (int argc, char *argv[]) {
     //sprintf(number, "%d", count);
     //strcat(expectedMsg, number);
     //expectedMsg[strlen(expectedMsg)] = 0;
-    char expectedMsg[12];
-    snprintf(expectedMsg, 12, "HELLO %d", count);
+    char expectedMsg[ARRAY_SIZE];
+    snprintf(expectedMsg, ARRAY_SIZE, "HELLO %d", count);
     int msgLen;
     msgLen = recv(s, buf, sizeof(buf), 0);
     buf[msgLen] = '\0';

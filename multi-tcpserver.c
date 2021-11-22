@@ -107,8 +107,8 @@ void *connectToClient(void *arg) {
       //sprintf(number, "%d", seq+1);
       //strcat(expectedMsg, number);
       //expectedMsg[strlen(expectedMsg)] = 0;
-      char expectedMsg[12];
-      snprintf(expectedMsg, 12, "HELLO %d", seq+1);
+      char expectedMsg[ARRAY_SIZE];
+      snprintf(expectedMsg, ARRAY_SIZE, "HELLO %d", seq+1);
       //printf("Expected %s; received %s", expectedMsg, buf);
       if (strcmp(expectedMsg, buf) == 0) {
         fputs(buf, stdout);
