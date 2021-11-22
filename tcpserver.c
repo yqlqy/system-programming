@@ -59,20 +59,23 @@ int main(int argc, char *argv[]) {
     while(len = recv(new_s, buf, sizeof(buf), 0)){
       //buf[len] = '\0';
       if (seq > 0) {
-        char expectedMsg[ARRAY_SIZE] = "HELLO ";
-        memset(number, 0, strlen(number));
-        sprintf(number, "%d\n", seq+1);
-        strcat(expectedMsg, number);
-	expectedMsg[strlen(expectedMsg)] = 0;
+        //char expectedMsg[ARRAY_SIZE] = "HELLO ";
+        //memset(number, 0, strlen(number));
+        //sprintf(number, "%d", seq+1);
+        char expectedMsg[12];
+        //strcat(expectedMsg, number);
+    	//expectedMsg[strlen(expectedMsg)] = 0;
+        snprintf(expectedMsg, 12, "HELLO %d", seq+1);
+        printf("Expected %s; received %s\n", expectedMsg, buf);
         if (strcmp(expectedMsg, buf) == 0) {
           fputs(buf, stdout);
-	  fflush(stdout);
-	  // fputs("Finished three way handshaking!!!\n", stdout);
-	  fflush(stdout);
+	      fflush(stdout);
+	      // fputs("Finished three way handshaking!!!\n", stdout);
+	      //fflush(stdout);
         } else {
           perror("ERROR");
         }
-	continue;
+	    continue;
         //close(new_s);
         //close(s);
 	//break;

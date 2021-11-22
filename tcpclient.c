@@ -42,17 +42,21 @@ int main (int argc, char *argv[]) {
   int count = atoi(argv[3]);
   int threeWayHandShaking = 0;
   while (1){//((fgets(buf, sizeof(buf),stdin)) {
-    char sendInfo[] = "HELLO ";
-    char number[ARRAY_SIZE];
-    sprintf(number, "%d", count);
-    strcat(sendInfo, number);
+    //char sendInfo[] = "HELLO ";
+    //char number[10];
+    //memset(number, 0, strlen(number)+1);
+    //snprintf(number, 10, "%d", count);
+    //strcat(sendInfo, argv[3]);
+    char sendInfo[12];
+    snprintf(sendInfo, 12, "HELLO %d", count);
     int len = strlen(sendInfo)+1;
+    //printf("Got params: %d; Client send ori msg; %s\n", count, sendInfo);
     send(s, sendInfo, len, 0);
     threeWayHandShaking++;
     count++;
     char buf[ARRAY_SIZE];
     memset(sendInfo, 0, strlen(sendInfo));
-    memset(number, 0, sizeof(number));
+    //memset(number, 0, strlen(number));
     
     if (threeWayHandShaking == 2) {
       close(s);
@@ -60,16 +64,18 @@ int main (int argc, char *argv[]) {
       break;
     }
 
-    char expectedMsg[ARRAY_SIZE] = "HELLO ";
-    sprintf(number, "%d", count);
-    strcat(expectedMsg, number);
-    expectedMsg[strlen(expectedMsg)] = 0;
+    //char expectedMsg[ARRAY_SIZE] = "HELLO ";
+    //sprintf(number, "%d", count);
+    //strcat(expectedMsg, number);
+    //expectedMsg[strlen(expectedMsg)] = 0;
+    char expectedMsg[12];
+    snprintf(expectedMsg, 12, "HELLO %d", count);
     int msgLen;
     msgLen = recv(s, buf, sizeof(buf), 0);
     buf[msgLen] = '\0';
-    // printf("Expected msg: %s\n", expectedMsg);
-    // printf("Buf msg: %s\n", buf); 
-
+    //printf("Expected msg: %s\n", expectedMsg);
+    //printf("Buf msg: %s\n", buf); 
+    //printf("Comparison: %d\n", strcmp(expectedMsg, buf));
     if (strcmp(expectedMsg, buf) == 0) {
       fputs(buf, stdout);
       fputs("\n", stdout);
