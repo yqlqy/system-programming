@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
     perror("simplex-talk: bind");
     exit(1);
   }
-  // connections can be pending if many concurrent client requests
+
   listen(s, MAX_PENDING);
   fd_set fd_set_for_all;
   fd_set fd_set_in_use;
@@ -85,7 +85,6 @@ int main(int argc, char *argv[])
         {
           int new_s;
           new_s = accept(s, (struct sockaddr *)&sin, &len);
-          // fcntl(new_s, F_SETFL, fcntl(new_s, F_GETFL, 0) | O_NONBLOCK);
           int flags = fcntl(fd, F_GETFL, 0);
           fcntl(fd, F_SETFL, flags | O_NONBLOCK);
           FD_SET(new_s, &fd_set_for_all);
@@ -131,8 +130,10 @@ void handle_first_shake(int fd)
       pt = strtok(NULL, " ");
     }
     seq = atoi(res[1]);
+    char* msg = malloc(strlen(res[0]+1));
+    strcpy(msg, res[0]);
     clients[fd].seq = seq;
-    clients[fd].msg = res[0];
+    clients[fd].msg = msg;
     clients[fd].fd = fd;
     seq++;
     memset(number, 0, sizeof(number));
@@ -147,7 +148,8 @@ void handle_second_shake(int fd)
 {
   char expectedMsg[ARRAY_SIZE];
   char buf[ARRAY_SIZE];
-  snprintf(expectedMsg, ARRAY_SIZE, "HELLO %d", clients[fd].seq + 2);
+  // printf("Message is %s\n",clients[fd].msg);
+  snprintf(expectedMsg, ARRAY_SIZE, "%s %d", clients[fd].msg, clients[fd].seq + 2);
   if (recv(fd, buf, sizeof(buf), 0) < 0)
   {
     perror("Second shake read error.");
@@ -162,4 +164,5 @@ void handle_second_shake(int fd)
   {
     perror("ERROR");
   }
+  free(clients[fd].msg);
 }
