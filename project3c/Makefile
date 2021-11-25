@@ -1,7 +1,6 @@
 all:
 	gcc -g tcpclient.c -o tcpclient
-	gcc -g tcpserver.c -o tcpserver
-	gcc -g multi-tcpserver.c -o multi-tcpserver -lpthread
+	gcc -g async-tcpserver.c -o async-tcpserver -lpthread
 
 clean:
 	rm tcpclient tcpserver multi-tcpserver
